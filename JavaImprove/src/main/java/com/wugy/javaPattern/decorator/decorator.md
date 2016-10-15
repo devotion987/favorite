@@ -1,0 +1,1 @@
+[装饰者模式](http://www.cnblogs.com/devotion/p/5411013.html)

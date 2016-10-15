@@ -1,0 +1,18 @@
+一、工厂方法模式
+1.定义：定义一个用于创建对象的接口，让子类决定实现哪一个类；
+2.工厂方法模式的扩展：
+	2.1 缩小为简单工厂模式：去掉AbstactHumanFactory抽象类，将HumanFactory中的createHuman方法改成静态的；
+	2.2 升级为多个工厂类：按照单一职责原则，每个人中对应一个创建者，每个创建者独立负责创建对应的对象；
+		public class BlackHumanFactory extends AbstactHumanFactory {
+			public Human createHuman() {
+				return new BlackHuman();
+			}
+		}
+	其它工厂类依次类推；
+	2.3 替代单例模式（通过反射创建单例对象）：参见SingletonFactory.java
+	2.4 延迟初始化：一个对象对消费完毕后，并不立即释放，工厂类保持其初始状态，等待再次被使用，参见ProductFactory.java
+		
+二、抽象工厂模式	
+1.定义：为创建一组相关或相互依赖的对象提供一个接口，而且无需指定它们的类。
+2.由工厂方法模式演变而来，为什么？
+	工厂方法模式中Human接口只定义了人类肤色（getColor）属性，若为人类增加性别（Human接口增加getSex方法）	
