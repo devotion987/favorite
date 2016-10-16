@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-autowire="byName">
+
+	<!-- 自动扫描与装配bean -->
+	<context:component-scan base-package="com.devotion.dao" />
+	<!-- 开启注解 -->
+	<context:annotation-config />
+
+	<!-- 导入外部的properties文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<bean id="daoClient" class="com.devotion.dao.client.support.PaginationDaoClient">
+		<property name="defaultDataSource" ref="dataSourceOne" />
+		<property name="resources" value="classpath*:sqlMap/sqlMap_*.xml" />
+	</bean>
+
+	<bean id="dataSourceOne" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${driverClass}" />
+		<property name="url" value="${jdbcUrl}" />
+		<property name="username" value="${user}" />
+		<property name="password" value="${password}" />
+		<!--initialSize: 初始化连接 -->
+		<property name="initialSize" value="3" />
+		<!--maxIdle: 最大空闲连接 -->
+		<property name="maxIdle" value="5" />
+		<!--minIdle: 最小空闲连接 -->
+		<property name="minIdle" value="5" />
+		<!--maxActive: 最大连接数量 -->
+		<property name="maxActive" value="10" />
+		<!--removeAbandoned: 是否自动回收超时连接 -->
+		<property name="removeAbandoned" value="TRUE" />
+		<!--removeAbandonedTimeout: 超时时间(以秒数为单位) -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!--maxWait: 超时等待时间以毫秒为单位 6000毫秒/1000等于6秒 -->
+		<property name="maxWait" value="6000" />
+		<property name="testOnBorrow" value="TRUE" />
+		<property name="testWhileIdle" value="TRUE" />
+		<property name="validationQuery">
+			<value>SELECT 1 from dual</value>
+		</property>
+	</bean>
+
+	<!-- 读写分离数据源1 -->
+	<!--<bean id="groupDataSourceOne" class="com.devotion.dao.group.GroupDataSource"> 
+		<property name="dataSourceGroup" ref="dsGroupOne"></property> </bean> -->
+
+	<!-- 读写分离数据源分组1 -->
+	<!-- <rws:ds_group id="dsGroupOne">
+		<rws:wr_ds name="master" ref="dataSourceOne" type="mysql" />
+		<rws:ro_ds name="slave1" ref="dataSourceOne" weight="100"
+			type="mysql" />
+	</rws:ds_group> -->
+
+	<bean id="mysqlDialect" class="com.devotion.dao.dialect.impl.MySQLDialect" />
+	<bean id="dialectFactory" class="com.devotion.dao.dialect.DialectFactory">
+		<property name="mapDialect">
+			<map>
+				<entry key="mysql">
+					<ref bean="mysqlDialect" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="demo">
+
+	<!-- 根据类型查询字典表 -->
+	<sql id="queryDemoList">
+		<![CDATA[
+			SELECT
+			    id,
+			    name,
+			    demoNo,
+			    remark
+			FROM
+			    t_demo
+			WHERE 1=1
+			<#if id?exists && id!="">
+				AND id = :id
+			</#if>
+			<#if name?exists && name!="">
+				AND name LIKE CONCAT('%',:name,'%') 
+		   </#if>
+		   order by id desc
+	   ]]>
+	</sql>
+
+	<!-- 根据类型查询字典表 -->
+	<sql id="queryBy">
+		<![CDATA[
+		SELECT
+		    id,
+		    name,
+		    demoNo,
+		    remark
+		FROM
+		    t_demo
+		WHERE 1=1
+		<#if id?exists && id!="">
+			AND id = :id
+		</#if>
+		<#if name?exists && name!="">
+			AND name LIKE CONCAT('%',:name,'%') 
+	    </#if>
+	   ]]>
+	</sql>
+
+	<!-- 批量添加 -->
+	<sql id="batchInsertDemo">
+        <![CDATA[
+            INSERT INTO t_demo 
+                 (name,demoNo,remark)
+            VALUES
+                (:name,:demoNo,:remark)
+        ]]>
+	</sql>
+
+	<!-- 批量添加 -->
+	<sql id="batchUpdateDemo">
+        <![CDATA[
+           UPDATE t_demo 
+           SET 
+                name =:name,
+                remark =:remark 
+           WHERE demoNo =:demoNo
+        ]]>
+	</sql>
+
+</sqlMap>
