@@ -13,7 +13,6 @@
 
     <modules>
         <module>JavaImprove</module>
-        <module>management</module>
         <module>spring-framework</module>
         <module>orm-framework</module>
     </modules>
