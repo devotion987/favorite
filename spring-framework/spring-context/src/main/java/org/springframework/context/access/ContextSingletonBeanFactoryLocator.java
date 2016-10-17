@@ -54,7 +54,7 @@ public class ContextSingletonBeanFactoryLocator extends SingletonBeanFactoryLoca
 	private static final String DEFAULT_RESOURCE_LOCATION = "classpath*:beanRefContext.xml";
 
 	/** The keyed singleton instances */
-	private static final Map<String, BeanFactoryLocator> instances = new HashMap<String, BeanFactoryLocator>();
+	private static final Map<String, BeanFactoryLocator> instances = new HashMap<>();
 
 
 	/**
