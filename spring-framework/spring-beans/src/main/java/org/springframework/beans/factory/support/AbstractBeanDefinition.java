@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils;
  * Base class for concrete, full-fledged {@link BeanDefinition} classes,
  * factoring out common properties of {@link GenericBeanDefinition},
  * {@link RootBeanDefinition}, and {@link ChildBeanDefinition}.
- * <p/>
+ * <p>
  * <p>The autowire constants match the ones defined in the
  * {@link org.springframework.beans.factory.config.AutowireCapableBeanFactory}
  * interface.
@@ -157,8 +157,15 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private String[] dependsOn;
 
+    /**
+     * 该属性为false时，容器在查找自动装配对象时，不考虑该bean，即它不会被考虑作为其它bean自动装配的候选者，但该bean
+     * 本身可以使用自动装配注入其它bean
+     **/
     private boolean autowireCandidate = true;
 
+    /**
+     * 自动装配当出现多个bean候选者时，将作为首选者，对应bean属性primary
+     **/
     private boolean primary = false;
 
     private final Map<String, AutowireCandidateQualifier> qualifiers =
@@ -166,28 +173,73 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private boolean nonPublicAccessAllowed = true;
 
+    /**
+     * 是否以一种宽松的模式解析构造函数，如果为false，则在一下情况抛出异常：<br />
+     * interface ITest{} <br />
+     * class ITestImpl implements ITest{} <br />
+     * </t>class Main{ <br />
+     * Main(ITest test){} <br />
+     * Main(ITestImpl test){} <br />
+     * }
+     **/
     private boolean lenientConstructorResolution = true;
 
+    /**
+     * 记录构造函数注入属性，对应bean属性constructor-arg
+     */
     private ConstructorArgumentValues constructorArgumentValues;
 
+    /**
+     * 普通属性集合
+     */
     private MutablePropertyValues propertyValues;
 
+    /**
+     * 方法重写持有者，记录lookup-method、replaced-method元素
+     */
     private MethodOverrides methodOverrides = new MethodOverrides();
 
+    /**
+     * 对应bean属性factory-bean，用法：<br />
+     * <bean id="instanceFactoryBean" class="example.InstanceFactoryBean" /> <br />
+     * <bean id="currentTime" factory-bean="instanceFactoryBean" factory-method="createTime" />
+     */
     private String factoryBeanName;
 
+    /**
+     * 对应bean属性factory-method
+     */
     private String factoryMethodName;
 
+    /**
+     * 初始化方法，对应bean属性init-method
+     */
     private String initMethodName;
 
+    /**
+     * 销毁方法，对应bean属性destroy-method
+     */
     private String destroyMethodName;
 
+    /**
+     * 是否执行init-method，程序设置
+     */
     private boolean enforceInitMethod = true;
 
+    /**
+     * 是否执行destroy-method，程序设置
+     */
     private boolean enforceDestroyMethod = true;
 
+    /**
+     * 是否是程序定义的而不是程序本身定义的，创建AOP时为true，程序设置
+     */
     private boolean synthetic = false;
 
+    /**
+     * 定义这个bean的应用，APPLICATION：用户；INFRASTRUCTURE：完全内部使用，与用户无关；
+     * SUPPORT：某些复杂配置的一部分，程序设置
+     */
     private int role = BeanDefinition.ROLE_APPLICATION;
 
     private String description;

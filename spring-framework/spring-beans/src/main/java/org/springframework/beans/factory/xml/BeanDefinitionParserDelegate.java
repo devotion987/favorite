@@ -539,8 +539,9 @@ public class BeanDefinitionParserDelegate {
             bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
             parseMetaElements(ele, bd);
-            parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
-            parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
+            MethodOverrides overrides = bd.getMethodOverrides();
+            parseLookupOverrideSubElements(ele, overrides);
+            parseReplacedMethodSubElements(ele, overrides);
 
             parseConstructorArgElements(ele, bd);
             parsePropertyElements(ele, bd);
@@ -811,6 +812,7 @@ public class BeanDefinitionParserDelegate {
                     error("'index' cannot be lower than 0", ele);
                 } else {
                     try {
+                        /** 使用ParseState栈标识解析的过程，这样做的好处？**/
                         this.parseState.push(new ConstructorArgumentEntry(index));
                         Object value = parsePropertyValue(ele, bd, null);
                         ConstructorArgumentValues.ValueHolder valueHolder = new ConstructorArgumentValues.ValueHolder(value);
@@ -1168,14 +1170,14 @@ public class BeanDefinitionParserDelegate {
         String defaultKeyType = mapEle.getAttribute(KEY_TYPE_ATTRIBUTE);
         String defaultValueType = mapEle.getAttribute(VALUE_TYPE_ATTRIBUTE);
 
-        List<Element> entryEles = DomUtils.getChildElementsByTagName(mapEle, ENTRY_ELEMENT);
-        ManagedMap<Object, Object> map = new ManagedMap<>(entryEles.size());
+        List<Element> entryElements = DomUtils.getChildElementsByTagName(mapEle, ENTRY_ELEMENT);
+        ManagedMap<Object, Object> map = new ManagedMap<>(entryElements.size());
         map.setSource(extractSource(mapEle));
         map.setKeyTypeName(defaultKeyType);
         map.setValueTypeName(defaultValueType);
         map.setMergeEnabled(parseMergeAttribute(mapEle));
 
-        for (Element entryEle : entryEles) {
+        for (Element entryEle : entryElements) {
             // Should only have one value child element: ref, value, list, etc.
             // Optionally, there might be a key child element.
             NodeList entrySubNodes = entryEle.getChildNodes();
@@ -1194,6 +1196,7 @@ public class BeanDefinitionParserDelegate {
                     } else {
                         // Child element is what we're looking for.
                         if (nodeNameEquals(candidateEle, DESCRIPTION_ELEMENT)) {
+                            System.out.println("the element is a <description>,ignore it");
                             // the element is a <description> -> ignore it
                         } else if (valueEle != null) {
                             error("<entry> element must not contain more than one value sub-element", entryEle);
