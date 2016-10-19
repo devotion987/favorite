@@ -301,7 +301,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	public void registerExternallyManagedConfigMember(Member configMember) {
 		synchronized (this.postProcessingLock) {
 			if (this.externallyManagedConfigMembers == null) {
-				this.externallyManagedConfigMembers = new HashSet<Member>(1);
+				this.externallyManagedConfigMembers = new HashSet<>(1);
 			}
 			this.externallyManagedConfigMembers.add(configMember);
 		}
@@ -317,7 +317,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	public void registerExternallyManagedInitMethod(String initMethod) {
 		synchronized (this.postProcessingLock) {
 			if (this.externallyManagedInitMethods == null) {
-				this.externallyManagedInitMethods = new HashSet<String>(1);
+				this.externallyManagedInitMethods = new HashSet<>(1);
 			}
 			this.externallyManagedInitMethods.add(initMethod);
 		}
@@ -333,7 +333,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	public void registerExternallyManagedDestroyMethod(String destroyMethod) {
 		synchronized (this.postProcessingLock) {
 			if (this.externallyManagedDestroyMethods == null) {
-				this.externallyManagedDestroyMethods = new HashSet<String>(1);
+				this.externallyManagedDestroyMethods = new HashSet<>(1);
 			}
 			this.externallyManagedDestroyMethods.add(destroyMethod);
 		}
