@@ -1598,6 +1598,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         return !this.alreadyCreated.isEmpty();
     }
 
+    @Override
+    protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+        return super.getSingleton(beanName, allowEarlyReference);
+    }
+
     /**
      * Get the object for the given bean instance, either the bean
      * instance itself or its created object in case of a FactoryBean.
