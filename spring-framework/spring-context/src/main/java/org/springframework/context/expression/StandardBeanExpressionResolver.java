@@ -61,10 +61,10 @@ public class StandardBeanExpressionResolver implements BeanExpressionResolver {
 
 	private ExpressionParser expressionParser;
 
-	private final Map<String, Expression> expressionCache = new ConcurrentHashMap<String, Expression>(256);
+	private final Map<String, Expression> expressionCache = new ConcurrentHashMap<>(256);
 
 	private final Map<BeanExpressionContext, StandardEvaluationContext> evaluationCache =
-			new ConcurrentHashMap<BeanExpressionContext, StandardEvaluationContext>(8);
+			new ConcurrentHashMap<>(8);
 
 	private final ParserContext beanExpressionParserContext = new ParserContext() {
 		@Override

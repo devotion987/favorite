@@ -46,7 +46,7 @@ public abstract class GenericTypeResolver {
 	/** Cache from Class to TypeVariable Map */
 	@SuppressWarnings("rawtypes")
 	private static final Map<Class<?>, Map<TypeVariable, Type>> typeVariableCache =
-			new ConcurrentReferenceHashMap<Class<?>, Map<TypeVariable, Type>>();
+			new ConcurrentReferenceHashMap<>();
 
 
 	/**
@@ -273,7 +273,7 @@ public abstract class GenericTypeResolver {
 	public static Map<TypeVariable, Type> getTypeVariableMap(Class<?> clazz) {
 		Map<TypeVariable, Type> typeVariableMap = typeVariableCache.get(clazz);
 		if (typeVariableMap == null) {
-			typeVariableMap = new HashMap<TypeVariable, Type>();
+			typeVariableMap = new HashMap<>();
 			buildTypeVariableMap(ResolvableType.forClass(clazz), typeVariableMap);
 			typeVariableCache.put(clazz, Collections.unmodifiableMap(typeVariableMap));
 		}
