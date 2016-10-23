@@ -1098,7 +1098,6 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
     public Object doResolveDependency(DependencyDescriptor descriptor, String beanName,
                                       Set<String> autowiredBeanNames, TypeConverter typeConverter) throws BeansException {
-
         InjectionPoint previousInjectionPoint = ConstructorResolver.setCurrentInjectionPoint(descriptor);
         try {
             Object shortcut = descriptor.resolveShortcut(this);
@@ -1107,6 +1106,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
 
             Class<?> type = descriptor.getDependencyType();
+            /** 用于spring中新增的注解@Value **/
             Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
             if (value != null) {
                 if (value instanceof String) {
@@ -1172,6 +1172,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         Class<?> type = descriptor.getDependencyType();
         if (type.isArray()) {
             Class<?> componentType = type.getComponentType();
+            /** 根据属性类型找到beanFactory中所有类型的匹配bean，返回值构成为：key=匹配的beanName，value=beanName对应的实例化后的bean
+             * （通过getBean(beanName)返回）**/
             Map<String, Object> matchingBeans = findAutowireCandidates(beanName, componentType,
                     new MultiElementDependencyDescriptor(descriptor));
             if (matchingBeans.isEmpty()) {
@@ -1181,6 +1183,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 autowiredBeanNames.addAll(matchingBeans.keySet());
             }
             TypeConverter converter = (typeConverter != null ? typeConverter : getTypeConverter());
+            /** 将bean的值转换为对应的type类型 **/
             Object result = converter.convertIfNecessary(matchingBeans.values(), type);
             if (getDependencyComparator() != null && result instanceof Object[]) {
                 Arrays.sort((Object[]) result, adaptDependencyComparator(matchingBeans));

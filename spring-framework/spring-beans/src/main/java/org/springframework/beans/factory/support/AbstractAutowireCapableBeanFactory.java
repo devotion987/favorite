@@ -421,7 +421,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
-                return result;
+                return null;
             }
         }
         return result;
@@ -435,7 +435,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             result = beanProcessor.postProcessAfterInitialization(result, beanName);
             if (result == null) {
-                return result;
+                return null;
             }
         }
         return result;
@@ -959,12 +959,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throws BeansException {
 
         try {
-            for (BeanPostProcessor bp : getBeanPostProcessors()) {
+//            for (BeanPostProcessor bp : getBeanPostProcessors()) {
+//                if (bp instanceof MergedBeanDefinitionPostProcessor) {
+//                    MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
+//                    bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);
+//                }
+//            }
+            getBeanPostProcessors().forEach((bp) -> {
                 if (bp instanceof MergedBeanDefinitionPostProcessor) {
                     MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
                     bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);
                 }
-            }
+            });
         } catch (Exception ex) {
             throw new BeanCreationException(mbd.getResourceDescription(), beanName,
                     "Post-processing failed of bean type [" + beanType + "] failed", ex);
@@ -1277,10 +1283,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     protected void autowireByName(
             String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
-
+        /** 寻找bw中需要依赖注入的属性 **/
         String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
         for (String propertyName : propertyNames) {
             if (containsBean(propertyName)) {
+                /** 递归初始化相关的bean **/
                 Object bean = getBean(propertyName);
                 pvs.add(propertyName, bean);
                 registerDependentBean(propertyName, beanName);
@@ -1325,10 +1332,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 // Don't try autowiring by type for type Object: never makes sense,
                 // even if it technically is a unsatisfied, non-simple property.
                 if (Object.class != pd.getPropertyType()) {
+                    /** 探测指定属性的set方法 **/
                     MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
                     // Do not allow eager init for type matching in case of a prioritized post-processor.
                     boolean eager = !PriorityOrdered.class.isAssignableFrom(bw.getWrappedClass());
                     DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
+                    /** 解析指定beanName的属性所匹配的值，并把解析到的属性名称存储在autowiredBeanNames中，当属性存在多个封装bean时
+                     * 如：@Autowired private List<A> aList;将会找到所有匹配A类型的bean并将其注入
+                     */
                     Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
                     if (autowiredArgument != null) {
                         pvs.add(propertyName, autowiredArgument);
@@ -1600,6 +1611,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 //                }
 //            }, getAccessControlContext());
             PrivilegedAction<Object> privilegedAction = () -> {
+                /** 对特殊的bean处理：Aware、BeanClassLoaderAware、BeanFactoryAware **/
                 invokeAwareMethods(beanName, bean);
                 return null;
             };
