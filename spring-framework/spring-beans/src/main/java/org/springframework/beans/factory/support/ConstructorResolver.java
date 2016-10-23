@@ -915,9 +915,8 @@ class ConstructorResolver {
                             "corresponding to actual number of parameters (" + paramCount + "): " + candidate);
                 }
                 return names;
-            } else {
-                return null;
             }
+            return null;
         }
     }
 
