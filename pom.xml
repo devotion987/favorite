@@ -15,6 +15,7 @@
         <module>JavaImprove</module>
         <module>spring-framework</module>
         <module>orm-framework</module>
+        <module>blue</module>
     </modules>
 
     <properties>
